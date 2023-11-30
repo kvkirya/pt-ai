@@ -34,7 +34,3 @@ def return_IoU(box1, box2):
     iou = intersection_area / union_area
 
     return iou
-
-def apply_IoU_to_images():
-
-    
