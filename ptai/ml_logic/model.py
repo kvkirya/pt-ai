@@ -12,6 +12,9 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.utils import image_dataset_from_directory
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow import convert_to_tensor
+from tensorflow.image import rgb_to_grayscale
+from tensorflow.keras.models import load_model as tfk__load_model
+import tensorflow as tf
 
 
 
@@ -103,21 +106,30 @@ def evaluate_model(
 def prediction_model(model):
     """Try and predict an image from the Dataset"""
 
-    y_pred = model.predict('/home/kyrill/code/pt-ai/pt-ai/raw_data/processed_images/squats/00000003.rgb.png_squats_0.0_cropped.png')
+    y_pred = model.predict(rgb_to_grayscale(convert_to_tensor('/home/kyrill/code/pt-ai/pt-ai/raw_data/test_images/IMG_8803.png', dtype=tf.float32)))
+    print(f'✅ Prediction complete. Pose: {y_pred}')
     return y_pred
 
 if __name__ == "__main__":
     # Creating the Data
+    """
+    current_wd = os.getcwd()
+    path_to_raw_data = os.path.join(current_wd,"../../raw_data")
     train_dataset = train_dataset_create()
     validation_dataset = validation_dataset_create()
-
+    """
     # Initializing the model
+    """
     model = initialize_CNN()
     model_compile(model)
     model.summary()
-
+    """
     # predicting on the model
+    """
     train_model(model, train_dataset, validation_dataset, patience=10, batchsize=128)
-    model.save('model.h5')
-    evaluate_model(model, 16)
-    # prediction_model(model)
+    model.save('/home/jupyter/pt-ai/raw_data/models/model.h5')
+    """
+    fitted_model = tfk__load_model('/home/kyrill/code/pt-ai/pt-ai/raw_data/models/model.h5')
+    prediction_model(fitted_model)
+    #model.save(os.path.join(path_to_raw_data,"models/model.h5"))
+    # evaluate_model(model, 16)
