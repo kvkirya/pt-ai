@@ -23,20 +23,27 @@ def initialize_CNN():
     model = models.Sequential()
 
     # Preprocessing layers
-    model.add(layers.CenterCrop(height=192, width=192, input_shape=[480,480,1]))
+    model.add(layers.CenterCrop(height=192, width=192, input_shape=[256,256,1]))
     model.add(layers.RandomFlip(mode='horizontal', seed=123))
     # model.add(layers.RandomContrast(factor=(0.2, 0.8), seed=123))   # When we switch to rgb we can use this again
 
     # Build of the Model
-    model.add(layers.Conv2D(filters=8, kernel_size=(4,4), activation='relu', padding='same'))
+    model.add(layers.Conv2D(filters=16, kernel_size=(4,4), activation='relu', padding='same'))
     model.add(layers.MaxPool2D((2,2)))
-    model.add(layers.Conv2D(16,(3,3), activation='relu'))
+    model.add(layers.Conv2D(32,(3,3), activation='relu'))
     model.add(layers.MaxPool2D((2,2)))
-    model.add(layers.Conv2D(32,(2,2), activation='relu'))
+    model.add(layers.Conv2D(64,(2,2), activation='relu'))
     model.add(layers.MaxPool2D((2,2)))
+    model.add(layers.Dropout(0.25))
 
     model.add(layers.Flatten())
-    model.add(layers.Dense(20, activation='relu'))
+    model.add(layers.Dense(50, activation='relu'))
+    model.add(layers.Dense(25, activation='tanh'))
+    model.add(layers.Dropout(0.2))
+    model.add(layers.Dense(14, activation='relu'))
+    model.add(layers.Dense(10, activation='tanh'))
+    model.add(layers.Dropout(0.2))
+    model.add(layers.Dense(6, activation='relu'))
     model.add(layers.Dense(4, activation='softmax'))
 
     print("✅ Model initialized")
@@ -62,7 +69,7 @@ def train_model(
     es = EarlyStopping(patience=patience, restore_best_weights=True)
 
     history = model.fit(train_dataset,
-                            epochs=100,
+                            epochs=500,
                             validation_data=validation_dataset,
                             batch_size=batchsize,
                             callbacks=[es])
@@ -92,6 +99,7 @@ def evaluate_model(
         return_dict=True
     )
     print(f"✅ Model evaluated")
+    print(metrics)
     return metrics
 
 
@@ -112,6 +120,7 @@ if __name__ == "__main__":
     model.summary()
 
     # predicting on the model
-    train_model(model, train_dataset, validation_dataset, patience=2, batchsize=16)
+    train_model(model, train_dataset, validation_dataset, patience=10, batchsize=64)
+    model.save('model.h5')
     evaluate_model(model, 16)
-    prediction_model(model)
+    # prediction_model(model)
