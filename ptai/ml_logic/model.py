@@ -34,16 +34,13 @@ def initialize_CNN():
     model.add(layers.MaxPool2D((2,2)))
     model.add(layers.Conv2D(64,(2,2), activation='relu'))
     model.add(layers.MaxPool2D((2,2)))
-    model.add(layers.Dropout(0.25))
 
     model.add(layers.Flatten())
     model.add(layers.Dense(50, activation='relu'))
-    model.add(layers.Dense(25, activation='tanh'))
+    model.add(layers.Dense(25, activation='relu'))
     model.add(layers.Dropout(0.2))
     model.add(layers.Dense(14, activation='relu'))
-    model.add(layers.Dense(10, activation='tanh'))
-    model.add(layers.Dropout(0.2))
-    model.add(layers.Dense(6, activation='relu'))
+    model.add(layers.Dense(10, activation='relu'))
     model.add(layers.Dense(4, activation='softmax'))
 
     print("✅ Model initialized")
@@ -120,7 +117,7 @@ if __name__ == "__main__":
     model.summary()
 
     # predicting on the model
-    train_model(model, train_dataset, validation_dataset, patience=10, batchsize=64)
+    train_model(model, train_dataset, validation_dataset, patience=10, batchsize=128)
     model.save('model.h5')
     evaluate_model(model, 16)
     # prediction_model(model)
