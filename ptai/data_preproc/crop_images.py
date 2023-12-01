@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import os
 from PIL import Image
 
-def crop_image_to_bounding_box(file_name, raw_image_path, bbox, padding=10):
+def crop_image_to_bounding_box(file_name, raw_image_path, bbox, padding=15):
     """
     Crops an image to the specified bounding box with additional padding.
     """
