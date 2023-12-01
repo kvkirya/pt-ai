@@ -41,7 +41,7 @@ def generate_cropped_images(path_to_raw_data):
             crop_images.save_cropped_image(cropped_image
                                         , os.path.join(path_to_raw_data, "../cropped_data", pose_variation)
                                         , file_name + "_" + pose_variation + "_" + str(round(iou,3)) + "_cropped.png")
-            
+
 #params
 batch_size = 32
 img_height = 256
@@ -51,7 +51,7 @@ num_classes = 4
 
 def train_dataset_create():
     train_dataset = image_dataset_from_directory(
-        directory='/home/kyrill/code/pt-ai/pt-ai/raw_data/processed_data_03',
+        directory='/home/kyrill/code/pt-ai/pt-ai/raw_data/processed_images',
         labels='inferred',
         label_mode='categorical',
         color_mode='grayscale',
@@ -66,18 +66,19 @@ def train_dataset_create():
 
 def validation_dataset_create():
     validation_dataset = image_dataset_from_directory(
-    directory='/home/kyrill/code/pt-ai/pt-ai/raw_data/processed_data_03',
-    labels='inferred',
-    label_mode='categorical',
-    color_mode='grayscale',
-    validation_split=validation_split,
-    subset="validation",
-    seed=123,
-    image_size=(img_height, img_width),
-    batch_size=batch_size)
+        directory='/home/kyrill/code/pt-ai/pt-ai/raw_data/processed_images',
+        labels='inferred',
+        label_mode='categorical',
+        color_mode='grayscale',
+        validation_split=validation_split,
+        subset="validation",
+        seed=123,
+        image_size=(img_height, img_width),
+        batch_size=batch_size
+    )
     return validation_dataset
-  
-  if __name__ == "__main__":
+
+if __name__ == "__main__":
 
     path_to_raw_data = "raw_data"
     unprocessed_data_folder = os.path.join(path_to_raw_data,"unprocessed_data")
