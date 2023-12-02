@@ -50,7 +50,7 @@ num_classes = 4
 
 def train_dataset_create():
     train_dataset = image_dataset_from_directory(
-        directory='/home/kyrill/code/pt-ai/pt-ai/raw_data/processed_data_03',
+        directory='/home/kyrill/code/pt-ai/pt-ai/raw_data/processed_images',
         labels='inferred',
         label_mode='categorical',
         color_mode='grayscale',
@@ -65,15 +65,16 @@ def train_dataset_create():
 
 def validation_dataset_create():
     validation_dataset = image_dataset_from_directory(
-    directory='/home/kyrill/code/pt-ai/pt-ai/raw_data/processed_data_03',
-    labels='inferred',
-    label_mode='categorical',
-    color_mode='grayscale',
-    validation_split=validation_split,
-    subset="validation",
-    seed=123,
-    image_size=(img_height, img_width),
-    batch_size=batch_size)
+        directory='/home/kyrill/code/pt-ai/pt-ai/raw_data/processed_images',
+        labels='inferred',
+        label_mode='categorical',
+        color_mode='grayscale',
+        validation_split=validation_split,
+        subset="validation",
+        seed=123,
+        image_size=(img_height, img_width),
+        batch_size=batch_size
+    )
     return validation_dataset
 
 if __name__ == "__main__":
