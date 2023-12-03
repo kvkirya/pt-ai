@@ -1,6 +1,7 @@
 # IMPORTS
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 from ptai.movenet.movenet_model import load_model_from_tfhub, run_movenet_inference
 from ptai.movenet.movenet_data import load_image_data, load_image_for_skeleton
@@ -34,10 +35,6 @@ def plot_skeleton_on_image(image_path, keypoints_with_scores):
     plt.imshow(output_overlay)
     _ = plt.axis('off')
     plt.show()
-
-# 4) LOAD IMAGE TO PLOT POINTS ON (CAN THIS BE COMBINED WITH STEP 2?)
-
-# 5) PLOT IMAGE WITH SKELETON
 
 if __name__ == "__main__":
 
