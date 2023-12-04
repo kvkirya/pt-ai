@@ -3,8 +3,14 @@ import numpy as np
 from PIL import Image
 from time import sleep
 import cv2
-
-
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from starlette.responses import HTMLResponse
+from starlette.requests import Request
+import cv2
+import numpy as np
+import time
 
 
 def webcam():
