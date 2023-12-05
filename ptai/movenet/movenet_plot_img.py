@@ -74,15 +74,16 @@ def draw_prediction_on_image(
     ax.add_patch(rect)
 
   fig.canvas.draw()
-
+  fig = plt.gcf()
+  size = fig.get_size_inches()*fig.dpi
+  print(size)
   image_from_plot = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+#   print(image_from_plot)
 
-  image_from_plot = image_from_plot.reshape(2400,2400,3)
-
-#   image_from_plot = image_from_plot.reshape(
-    #   fig.canvas.get_width_height()[::-1] + (3,))
-
-  plt.close(fig)
+  image_from_plot = image_from_plot.reshape(3200,2400,3)
+#   image_from_plot = image_from_plot.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+#   plt.close(fig)
+  plt.savefig(f"{image}")
   if output_image_height is not None:
     output_image_width = int(output_image_height / height * width)
     image_from_plot = cv2.resize(

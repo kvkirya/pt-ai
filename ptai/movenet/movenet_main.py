@@ -16,7 +16,7 @@ from cv2 import imshow
 import imageio
 from IPython.display import HTML, display
 from matplotlib.collections import LineCollection
-
+import requests
 from ptai.movenet.movenet_model import load_model_from_tfhub, run_movenet_inference
 from ptai.movenet.movenet_data import load_image_data, load_image_for_skeleton
 from ptai.movenet.movenet_plot_img import draw_prediction_on_image
@@ -235,20 +235,22 @@ def angle_calc(keypoints_with_scores):  #(image_capture)
     return(angles)
 
 #get angles comparrison
-def compare_angles(prediction, angles):
-
+def compare_angles(prediction, angles, threshold=10):
     dict1 = prediction
     dict2 = angles
-    dict3 = {}
+    flexed_dict = {}
 
     for dict1_key, dict1_values in dict1.items():
-        dict3[dict1_key] = abs(dict2[dict1_key]-dict1[dict1_key])
+        flexed_dict[dict1_key] = abs(dict2[dict1_key] - dict1[dict1_key]) < threshold
 
-    return dict3
+    return flexed_dict
+
+
+
 
 
 #Checking whether the angles are right or not
-def render_red(dict3, KEYPOINT_EDGE_INDS_TO_COLOR):
+def render_red(flexed_dict, KEYPOINT_EDGE_INDS_TO_COLOR):
     '''
     Takes the dict of differences in angles and looks for an angle difference more than 10 degrees,
     then changes the colours of the corresponding bars around the angle to red.
@@ -272,7 +274,7 @@ def render_red(dict3, KEYPOINT_EDGE_INDS_TO_COLOR):
 
     RED_EDGES = KEYPOINT_EDGE_INDS_TO_COLOR.copy()
 
-    for k, v in dict3.items():
+    for k, v in flexed_dict.items():
         if v >= 7:
             points_to_color = bars_dictionary[k]
             for point in points_to_color:
@@ -430,65 +432,90 @@ def plot_red(keypoints_with_scores,image, red_edges):
 
 
 if __name__ == "__main__":
-  
+
     image_path = "/Users/nicowsendagorta/code/kvkirya/pt-ai/raw_data/test_squat.png"
     image = tf.keras.utils.load_img(image_path)
     input_arr = tf.keras.utils.img_to_array(image)
     input_arr = np.array([input_arr])
     print(input_arr.shape)
 
+    # response = requests.post("http://localhost:8080/skeletonizer", json=json.dumps(input_arr.tolist()))
+    # keypoints_with_scores = response.json()
+    # keypoints_with_scores = eval(keypoints_with_scores)
+    # keypoints_with_scores = np.array(keypoints_with_scores)
+    # # keypoints_with_scores = load_model_and_run_inference(image_path=image_path)
 
-    response = requests.post("http://localhost:8080/skeletonizer", json=json.dumps(input_arr.tolist()))
-    keypoints_with_scores = response.json()
-    keypoints_with_scores = eval(keypoints_with_scores)
-    keypoints_with_scores = np.array(keypoints_with_scores)
-    # keypoints_with_scores = load_model_and_run_inference(image_path=image_path)
+
+    # plot_skeleton_on_image(image_path, keypoints_with_scores)
+
+    image_path_1 = "/Users/nicowsendagorta/code/kvkirya/pt-ai/raw_data/perfect_squat.png"
+    image_path_2 = '/Users/nicowsendagorta/code/kvkirya/pt-ai/raw_data/cropped_data_02/00020029.rgb.png_4_0.0_squats_cropped.png'
+
+    keypoints_with_scores_im1 = load_model_and_run_inference(image_path=image_path_1)
+    print(keypoints_with_scores_im1)
+    keypoints_with_scores_im2 = load_model_and_run_inference(image_path=image_path_2)
+
+    angles = angle_calc(keypoints_with_scores_im1)
+    prediction = angle_calc(keypoints_with_scores_im2)
+    threshold = 20
+    flexed_dict = compare_angles(prediction, angles, threshold)
+
+    KEYPOINT_EDGE_INDS_TO_COLOR = {
+    (0, 1): 'g',
+    (0, 2): 'g',
+    (1, 3): 'g',
+    (2, 4): 'g',
+    (0, 5): 'g',
+    (0, 6): 'g',
+    (5, 7): 'g',
+    (7, 9): 'g',
+    (6, 8): 'g',
+    (8, 10): 'g',
+    (5, 6): 'g',
+    (5, 11): 'g',
+    (6, 12): 'g',
+    (11, 12): 'g',
+    (11, 13): 'g',
+    (13, 15): 'g',
+    (12, 14): 'g',
+    (14, 16): 'g',
+}
 
 
-    plot_skeleton_on_image(image_path, keypoints_with_scores)
+    colored_edges = render_red(flexed_dict, KEYPOINT_EDGE_INDS_TO_COLOR)
 
-#     image_path_1 = "/Users/abou48862/code/kvkirya/pt-ai/raw_data/cropped_data_00/00000010.rgb.png_5_0.0_squats_cropped.png"
-#     image_path_2 = "/Users/abou48862/code/kvkirya/pt-ai/raw_data/cropped_data_00/00000038.rgb.png_19_0.0_squats_cropped.png"
+    image = tf.io.read_file(image_path_2)
+    image = tf.image.decode_png(image)
 
-#     keypoints_with_scores_im1 = load_model_and_run_inference(image_path=image_path_1)
-#     keypoints_with_scores_im2 = load_model_and_run_inference(image_path=image_path_2)
+    height=192
+    width=192
 
-#     angles = angle_calc(keypoints_with_scores_im1)
-#     prediction = angle_calc(keypoints_with_scores_im2)
+    #print(_keypoints_and_edges_for_display_red(keypoints_with_scores_im1, RED_EDGES, height, width, keypoint_threshold=0.11))
 
-#     dict3 = compare_angles(prediction, angles)
-#     KEYPOINT_EDGE_INDS_TO_COLOR = {
-#     (0, 1): 'g',
-#     (0, 2): 'g',
-#     (1, 3): 'g',
-#     (2, 4): 'g',
-#     (0, 5): 'g',
-#     (0, 6): 'g',
-#     (5, 7): 'g',
-#     (7, 9): 'g',
-#     (6, 8): 'g',
-#     (8, 10): 'g',
-#     (5, 6): 'g',
-#     (5, 11): 'g',
-#     (6, 12): 'g',
-#     (11, 12): 'g',
-#     (11, 13): 'g',
-#     (13, 15): 'g',
-#     (12, 14): 'g',
-#     (14, 16): 'g',
-# }
+    print(draw_prediction_on_image(image,keypoints_with_scores_im2))
+    #print(_angles(prediction, angles))
+    #print(keypoints_with_scores.shape)
+    # plot_skeleton_on_image(image_path, keypoints_with_scores)
 
-#     red_edges = render_red(dict3, KEYPOINT_EDGE_INDS_TO_COLOR)
 
-#     image = tf.io.read_file(image_path_1)
-#     image = tf.image.decode_png(image)
+# -------------------------------------------------------------
+# compare_angles function to
+# return a boolean value for each angle based on a threshold.
+# ff the angle is less than threshold, consider flexed;
+# otherwise not flexed
 
-#     height=192
-#     width=192
+# aka ....dict < threshold which is inputed as threshold=90
 
-#     #print(_keypoints_and_edges_for_display_red(keypoints_with_scores_im1, RED_EDGES, height, width, keypoint_threshold=0.11))
+#  flexed_dict = {}
 
-#     print(plot_red(keypoints_with_scores_im1,image, red_edges))
-#     #print(compare_angles(prediction, angles))
-#     #print(keypoints_with_scores.shape)
-#     # plot_skeleton_on_image(image_path, keypoints_with_scores)
+#     for dict1_key, dict1_values in dict1.items():
+#         flexed_dict[dict1_key] = abs(dict2[dict1_key] - dict1[dict1_key]) < threshold
+
+#     return flexed_dict
+
+
+
+# angles = angle_calc(keypoints_with_scores_im1)
+# prediction = angle_calc(keypoints_with_scores_im2)
+
+# flexed_dict = compare_angles(prediction, angles, threshold)
