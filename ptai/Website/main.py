@@ -16,9 +16,10 @@ import time
 def webcam():
     cap = cv2.VideoCapture(0)
 
-
-    frame_placeholder=st.empty()
+    frame_placeholder = st.empty()
     stop_button_pressed = st.button('Stop')
+
+    frame_count = 0  # Initialize frame counter
 
     while cap.isOpened() and not stop_button_pressed:
         ret, frame = cap.read()
@@ -27,11 +28,24 @@ def webcam():
             st.write('Video Capture has terminated')
             break
 
+        # Flip the frame horizontally (mirror)
+        frame = cv2.flip(frame, 1)
+
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame_placeholder.image(frame, channels='RGB')
 
+        frame_count += 1
+        if frame_count % 5 == 0:
+            # Send the frame to an API here
+            
+            # print("Sending frame to API")
+
         if cv2.waitKey(5) & 0xFF == ord('q'):
             break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
 
 
     cv2.imshow('Body Detector', frame)

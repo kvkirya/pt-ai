@@ -25,17 +25,20 @@ model = load_model_from_tfhub()
 
 @app.post("/skeletonizer")
 async def get_skeletonization(input_arr: Request):
-    data = await input_arr.json()
-    data = np.array(json.loads(data))
+    try:
+        data = await input_arr.json()
+        data = np.array(json.loads(data))
 
-    image = tf.convert_to_tensor(data)
-
-
-    # image = tf.expand_dims(image, axis=0)
-        # Resize and pad the image to keep the aspect ratio and fit the expected size.
-    image = tf.cast(tf.image.resize_with_pad(image, 192, 192), dtype=tf.int32)
+        image = tf.convert_to_tensor(data)
 
 
-    keypoints_with_scores = run_movenet_inference(model, image)
+        # image = tf.expand_dims(image, axis=0)
+            # Resize and pad the image to keep the aspect ratio and fit the expected size.
+        image = tf.cast(tf.image.resize_with_pad(image, 192, 192), dtype=tf.int32)
 
-    return keypoints_with_scores.tolist().__repr__()
+
+        keypoints_with_scores = run_movenet_inference(model, image)
+        return keypoints_with_scores.tolist()
+    except Exception as e:
+        return {"error": str(e)}
+    
