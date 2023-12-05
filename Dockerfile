@@ -1,3 +1,20 @@
+FROM python:3.10.6-bullseye
+
+WORKDIR /server
+
+COPY requirements.txt requirements.txt
+
+COPY setup.py setup.py
+
+COPY ptai ptai
+
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt \
+    && pip install .
+
+
+CMD uvicorn ptai.api.movenet:app --host 0.0.0.0 --port 8080
+
 # $DEL_BEGIN
 
 # ####### 👇 SIMPLE SOLUTION (x86 and M1) 👇 ########
@@ -20,19 +37,19 @@
 ####### 👇 OPTIMIZED SOLUTION (x86)👇 #######
 
 # tensorflow base-images are optimized: lighter than python-buster + pip install tensorflow
-FROM tensorflow/tensorflow:2.10.0
+#FROM tensorflow/tensorflow:2.10.0
 # OR for apple silicon, use this base image instead
 # FROM armswdev/tensorflow-arm-neoverse:r22.09-tf-2.10.0-eigen
 
-WORKDIR /pt-ai-project
+#WORKDIR /pt-ai-project
 
 # We strip the requirements from useless packages like `ipykernel`, `matplotlib` etc...
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+#COPY requirements.txt requirements.txt
+#RUN pip install -r requirements.txt
 
-COPY ptai ptai
-COPY setup.py setup.py
-RUN pip install .
+#COPY ptai ptai
+#COPY setup.py setup.py
+#RUN pip install .
 
-CMD uvicorn ptai.api.fast:app --host 0.0.0.0 --port $PORT
+#CMD uvicorn ptai.api.fast:app --host 0.0.0.0 --port $PORT
 # $DEL_END

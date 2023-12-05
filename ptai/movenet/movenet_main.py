@@ -430,49 +430,65 @@ def plot_red(keypoints_with_scores,image, red_edges):
 
 
 if __name__ == "__main__":
+  
+    image_path = "/Users/nicowsendagorta/code/kvkirya/pt-ai/raw_data/test_squat.png"
+    image = tf.keras.utils.load_img(image_path)
+    input_arr = tf.keras.utils.img_to_array(image)
+    input_arr = np.array([input_arr])
+    print(input_arr.shape)
 
-    image_path_1 = "/Users/abou48862/code/kvkirya/pt-ai/raw_data/cropped_data_00/00000010.rgb.png_5_0.0_squats_cropped.png"
-    image_path_2 = "/Users/abou48862/code/kvkirya/pt-ai/raw_data/cropped_data_00/00000038.rgb.png_19_0.0_squats_cropped.png"
 
-    keypoints_with_scores_im1 = load_model_and_run_inference(image_path=image_path_1)
-    keypoints_with_scores_im2 = load_model_and_run_inference(image_path=image_path_2)
+    response = requests.post("http://localhost:8080/skeletonizer", json=json.dumps(input_arr.tolist()))
+    keypoints_with_scores = response.json()
+    keypoints_with_scores = eval(keypoints_with_scores)
+    keypoints_with_scores = np.array(keypoints_with_scores)
+    # keypoints_with_scores = load_model_and_run_inference(image_path=image_path)
 
-    angles = angle_calc(keypoints_with_scores_im1)
-    prediction = angle_calc(keypoints_with_scores_im2)
 
-    dict3 = compare_angles(prediction, angles)
-    KEYPOINT_EDGE_INDS_TO_COLOR = {
-    (0, 1): 'g',
-    (0, 2): 'g',
-    (1, 3): 'g',
-    (2, 4): 'g',
-    (0, 5): 'g',
-    (0, 6): 'g',
-    (5, 7): 'g',
-    (7, 9): 'g',
-    (6, 8): 'g',
-    (8, 10): 'g',
-    (5, 6): 'g',
-    (5, 11): 'g',
-    (6, 12): 'g',
-    (11, 12): 'g',
-    (11, 13): 'g',
-    (13, 15): 'g',
-    (12, 14): 'g',
-    (14, 16): 'g',
-}
+    plot_skeleton_on_image(image_path, keypoints_with_scores)
 
-    red_edges = render_red(dict3, KEYPOINT_EDGE_INDS_TO_COLOR)
+#     image_path_1 = "/Users/abou48862/code/kvkirya/pt-ai/raw_data/cropped_data_00/00000010.rgb.png_5_0.0_squats_cropped.png"
+#     image_path_2 = "/Users/abou48862/code/kvkirya/pt-ai/raw_data/cropped_data_00/00000038.rgb.png_19_0.0_squats_cropped.png"
 
-    image = tf.io.read_file(image_path_1)
-    image = tf.image.decode_png(image)
+#     keypoints_with_scores_im1 = load_model_and_run_inference(image_path=image_path_1)
+#     keypoints_with_scores_im2 = load_model_and_run_inference(image_path=image_path_2)
 
-    height=192
-    width=192
+#     angles = angle_calc(keypoints_with_scores_im1)
+#     prediction = angle_calc(keypoints_with_scores_im2)
 
-    #print(_keypoints_and_edges_for_display_red(keypoints_with_scores_im1, RED_EDGES, height, width, keypoint_threshold=0.11))
+#     dict3 = compare_angles(prediction, angles)
+#     KEYPOINT_EDGE_INDS_TO_COLOR = {
+#     (0, 1): 'g',
+#     (0, 2): 'g',
+#     (1, 3): 'g',
+#     (2, 4): 'g',
+#     (0, 5): 'g',
+#     (0, 6): 'g',
+#     (5, 7): 'g',
+#     (7, 9): 'g',
+#     (6, 8): 'g',
+#     (8, 10): 'g',
+#     (5, 6): 'g',
+#     (5, 11): 'g',
+#     (6, 12): 'g',
+#     (11, 12): 'g',
+#     (11, 13): 'g',
+#     (13, 15): 'g',
+#     (12, 14): 'g',
+#     (14, 16): 'g',
+# }
 
-    print(plot_red(keypoints_with_scores_im1,image, red_edges))
-    #print(compare_angles(prediction, angles))
-    #print(keypoints_with_scores.shape)
-    # plot_skeleton_on_image(image_path, keypoints_with_scores)
+#     red_edges = render_red(dict3, KEYPOINT_EDGE_INDS_TO_COLOR)
+
+#     image = tf.io.read_file(image_path_1)
+#     image = tf.image.decode_png(image)
+
+#     height=192
+#     width=192
+
+#     #print(_keypoints_and_edges_for_display_red(keypoints_with_scores_im1, RED_EDGES, height, width, keypoint_threshold=0.11))
+
+#     print(plot_red(keypoints_with_scores_im1,image, red_edges))
+#     #print(compare_angles(prediction, angles))
+#     #print(keypoints_with_scores.shape)
+#     # plot_skeleton_on_image(image_path, keypoints_with_scores)
