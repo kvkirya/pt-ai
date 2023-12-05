@@ -5,6 +5,8 @@ import pandas as pd
 from colorama import Fore, Style
 from typing import Tuple
 from ptai.ml_logic.data import train_dataset_create, validation_dataset_create
+from PIL import Image
+from ptai.ml_logic.preprocessor import preprocessing_images
 
 from tensorflow.keras import layers
 from tensorflow.keras import models
@@ -102,11 +104,14 @@ def evaluate_model(
     print(metrics)
     return metrics
 
+def load_model(path_to_model):
+    fitted_model = tfk__load_model(path_to_model)
+    return fitted_model
 
-def prediction_model(model):
+def prediction_model(model, image_to_pass):
     """Try and predict an image from the Dataset"""
-
-    y_pred = model.predict(rgb_to_grayscale(convert_to_tensor('/home/kyrill/code/pt-ai/pt-ai/raw_data/test_images/IMG_8803.png', dtype=tf.float32)))
+    image_to_pred = preprocessing_images(image_to_pass)
+    y_pred = model.predict(image_to_pred)
     print(f'✅ Prediction complete. Pose: {y_pred}')
     return y_pred
 
@@ -129,7 +134,10 @@ if __name__ == "__main__":
     train_model(model, train_dataset, validation_dataset, patience=10, batchsize=128)
     model.save('/home/jupyter/pt-ai/raw_data/models/model.h5')
     """
+
+    # The true prediction
     fitted_model = tfk__load_model('/home/kyrill/code/pt-ai/pt-ai/raw_data/models/model.h5')
-    prediction_model(fitted_model)
+    prediction_model(fitted_model, '/home/kyrill/code/pt-ai/pt-ai/raw_data/test_images/IMG_8805.jpg')
+
     #model.save(os.path.join(path_to_raw_data,"models/model.h5"))
     # evaluate_model(model, 16)

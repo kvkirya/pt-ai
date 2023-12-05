@@ -80,3 +80,12 @@ def _keypoints_and_edges_for_display(keypoints_with_scores,
         edges_xy = np.zeros((0, 2, 2))
 
     return keypoints_xy, edges_xy, edge_colors
+
+
+
+if __name__ == "__main__":
+    image_path = input("Please enter the path to the image:")
+
+    keypoints_with_scores = load_model_and_run_inference(image_path=image_path)
+
+    plot_skeleton_on_image(image_path, keypoints_with_scores)

@@ -1,8 +1,11 @@
 import tensorflow as tf
 import numpy as np
+import cv2
 
 def load_image_data(image_path, width=192, height=192, source="LOCAL"):
-
+    """This returns the image in the right dimensions that is then used
+    to plot the points and run the movenet
+    """
     if source == "LOCAL":
 
         image = tf.io.read_file(image_path)
@@ -18,7 +21,8 @@ def load_image_data(image_path, width=192, height=192, source="LOCAL"):
     return image
 
 def load_image_for_skeleton(image_path):
-
+    """This uses the image, in the right shape, to display the skeleton
+    """
     image = tf.io.read_file(image_path)
 
     image = tf.image.decode_png(image)
