@@ -6,7 +6,7 @@ from colorama import Fore, Style
 from typing import Tuple
 from ptai.ml_logic.data import train_dataset_create, validation_dataset_create
 from PIL import Image
-from ptai.ml_logic.preprocessor import preprocessing_images
+from ptai.ml_logic.preprocessor import preprocessing_images, preprocessing_images_vgg16
 
 from tensorflow.keras import layers
 from tensorflow.keras import models
@@ -110,7 +110,7 @@ def load_model(path_to_model):
 
 def prediction_model(model, image_to_pass):
     """Try and predict an image from the Dataset"""
-    image_to_pred = preprocessing_images(image_to_pass)
+    image_to_pred = preprocessing_images_vgg16(image_to_pass)
     y_pred = model.predict(image_to_pred)
     print(f'✅ Prediction complete. Pose: {y_pred}')
     return y_pred
@@ -136,8 +136,8 @@ if __name__ == "__main__":
     """
 
     # The true prediction
-    fitted_model = tfk__load_model('/home/kyrill/code/pt-ai/pt-ai/raw_data/models/model.h5')
-    prediction_model(fitted_model, '/home/kyrill/code/pt-ai/pt-ai/raw_data/test_images/IMG_8805.jpg')
+    fitted_model = tfk__load_model('../../raw_data/models/model.h5')
+    prediction_model(fitted_model, '../../raw_data/test_images/IMG_8805.jpg')
 
     #model.save(os.path.join(path_to_raw_data,"models/model.h5"))
     # evaluate_model(model, 16)

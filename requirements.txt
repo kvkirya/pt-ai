@@ -104,9 +104,9 @@ soupsieve==2.5
 stack-data==0.6.3
 shapely
 terminado==0.18.0
-tensorflow-macos==2.10.0; sys_platform == 'darwin' and 'ARM' in platform_version
-tensorflow==2.10.0; sys_platform == 'darwin' and 'ARM' not in platform_version
-tensorflow==2.10.0; sys_platform != 'darwin'
+tensorflow-macos==2.15.0; sys_platform == 'darwin' and 'ARM' in platform_version
+tensorflow==2.15.0; sys_platform == 'darwin' and 'ARM' not in platform_version
+tensorflow==2.15.0; sys_platform != 'darwin'
 threadpoolctl==3.2.0
 tinycss2==1.2.1
 tomli==2.0.1
