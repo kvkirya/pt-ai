@@ -16,7 +16,7 @@ from cv2 import imshow
 import imageio
 from IPython.display import HTML, display
 from matplotlib.collections import LineCollection
-
+import requests
 from ptai.movenet.movenet_model import load_model_from_tfhub, run_movenet_inference
 from ptai.movenet.movenet_data import load_image_data, load_image_for_skeleton
 from ptai.movenet.movenet_plot_img import draw_prediction_on_image
@@ -430,13 +430,12 @@ def plot_red(keypoints_with_scores,image, red_edges):
 
 
 if __name__ == "__main__":
-  
+
     image_path = "/Users/nicowsendagorta/code/kvkirya/pt-ai/raw_data/test_squat.png"
     image = tf.keras.utils.load_img(image_path)
     input_arr = tf.keras.utils.img_to_array(image)
     input_arr = np.array([input_arr])
     print(input_arr.shape)
-
 
     response = requests.post("http://localhost:8080/skeletonizer", json=json.dumps(input_arr.tolist()))
     keypoints_with_scores = response.json()
