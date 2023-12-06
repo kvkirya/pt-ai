@@ -1,6 +1,4 @@
 import tensorflow as tf
-import numpy as np
-import cv2
 
 def load_image_data(image_path, width=192, height=192, source="LOCAL"):
     """This returns the image in the right dimensions that is then used

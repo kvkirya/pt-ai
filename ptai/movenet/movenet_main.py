@@ -1,22 +1,10 @@
 # IMPORTS
 import matplotlib.pyplot as plt
-import cv2
-import mediapipe as mp
 import numpy as np
-import pandas as pd
-import os
-import json
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from PIL import Image
-from math import atan2, degrees, fabs
 import matplotlib.patches as patches
-import tensorflow_hub as hub
-from cv2 import imshow
-import imageio
-from IPython.display import HTML, display
 from matplotlib.collections import LineCollection
-import requests
 from ptai.movenet.movenet_model import load_model_from_tfhub, run_movenet_inference
 from ptai.movenet.movenet_data import load_image_data, load_image_for_skeleton
 from ptai.movenet.movenet_plot_img import draw_prediction_on_image
@@ -49,6 +37,7 @@ def plot_skeleton_on_image(image_path, keypoints_with_scores):
     plt.imshow(output_overlay)
     _ = plt.axis('off')
     plt.show()
+
 
 #Calculating the angles and difference between angles
 def calculate_angle(a,b,c):

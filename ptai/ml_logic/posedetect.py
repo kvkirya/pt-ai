@@ -33,6 +33,7 @@ def train_posedetect_model(X_train, y_train, settings_dict):
 
     return best_model
 
+
 def posedetect_preproc(image: np.array, movenet_model) -> dict:
 
     """This function preprocesses input for pose detection inference by:

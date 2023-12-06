@@ -1,7 +1,4 @@
-import os
-
 import tensorflow_hub as hub
-import tensorflow as tf
 
 def load_model_from_tfhub(model_url="""https://www.kaggle.com/models/google/movenet/frameworks/TensorFlow2/variations/singlepose-lightning/versions/4"""):
 

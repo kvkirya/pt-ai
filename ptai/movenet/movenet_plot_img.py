@@ -1,5 +1,4 @@
 import cv2
-
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 import matplotlib.patches as patches
@@ -7,7 +6,6 @@ import matplotlib.patches as patches
 import numpy as np
 
 from ptai.movenet.movenet_helper import _keypoints_and_edges_for_display
-
 def draw_prediction_on_image(
     image, keypoints_with_scores, crop_region=None, close_figure=False,
     output_image_height=None):
