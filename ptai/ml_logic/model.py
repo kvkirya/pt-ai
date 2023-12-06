@@ -1,22 +1,9 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-
-from colorama import Fore, Style
-from typing import Tuple
-from ptai.ml_logic.data import train_dataset_create, validation_dataset_create
-from PIL import Image
-from ptai.ml_logic.preprocessor import preprocessing_images, preprocessing_images_vgg16
+from ptai.ml_logic.preprocessor import preprocessing_images_vgg16
 
 from tensorflow.keras import layers
 from tensorflow.keras import models
-from tensorflow.keras.utils import to_categorical
-from tensorflow.keras.utils import image_dataset_from_directory
 from tensorflow.keras.callbacks import EarlyStopping
-from tensorflow import convert_to_tensor
-from tensorflow.image import rgb_to_grayscale
 from tensorflow.keras.models import load_model as tfk__load_model
-import tensorflow as tf
 
 
 

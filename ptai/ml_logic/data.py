@@ -1,9 +1,6 @@
 import os
 import json
 from tqdm import tqdm
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
 import json
 
 # Needed for the model filtering

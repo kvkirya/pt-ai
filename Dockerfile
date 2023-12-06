@@ -5,6 +5,7 @@ FROM python:3.10.6-buster
 
 WORKDIR /ptai-proj
 
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
@@ -13,6 +14,7 @@ COPY setup.py setup.py
 RUN pip install .
 
 COPY raw_data/models raw_data/models
+
 
 # COPY Makefile Makefile
 # RUN make reset_local_files
