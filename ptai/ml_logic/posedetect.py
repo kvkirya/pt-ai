@@ -6,6 +6,7 @@ from ptai.movenet.movenet_model import load_model_from_tfhub, run_movenet_infere
 
 from flaml import AutoML
 import numpy as np
+import pandas as pd
 import pickle
 
 def train_posedetect_model(X_train, y_train, settings_dict):
@@ -33,7 +34,7 @@ def train_posedetect_model(X_train, y_train, settings_dict):
 
     return best_model
 
-def posedetect_preproc(image: np.array, movenet_model) -> dict:
+def posedetect_preproc(image, movenet_model):
 
     """This function preprocesses input for pose detection inference by:
     1) Take in any image and run skeleton detection with Movenet Single Pose Lightning
@@ -44,7 +45,7 @@ def posedetect_preproc(image: np.array, movenet_model) -> dict:
 
     keypoint_angles = angle_calc(keypoints)
 
-    return keypoint_angles
+    return pd.DataFrame(keypoint_angles, index=[0])
 
 def save_posedetect_model(model, model_path):
 
@@ -67,7 +68,7 @@ def load_posedetect_model(model_path):
     return loaded_model
 
 
-def posedetect_inference(keypoints: dict, posedetect_model, encoder = None, encoded = True):
+def posedetect_inference(keypoints, posedetect_model, encoder = None, encoded = True):
 
     """Function to run inference on calculated angles of 'skeleteon' provided by Movenet
     Multiclass classifier XGBoost - returns one of three classes,
@@ -80,13 +81,16 @@ def posedetect_inference(keypoints: dict, posedetect_model, encoder = None, enco
 
     if encoded == False:
 
-        prediction = encoder.inverse_transform(prediction)
+        mapping = {0: 'lunge_left', 1: 'lunge_right', 2: 'pushup', 3: 'squat'}
+        prediction_str = [mapping[i] for i in prediction]
+        prediction = np.array(prediction_str)
 
     return prediction
 
 if __name__ == "__main__":
 
     test_img_path = input("Please enter the path to the test image")
+    # test_img_path = "/Users/mischadhar/code/ds-projects/pose-detection/q4-repo/pt-ai/raw_data/test_images/IMG_1196.jpg"
 
     test_img = load_image_data(test_img_path)
 
@@ -95,8 +99,9 @@ if __name__ == "__main__":
     X_pred = posedetect_preproc(test_img, movenet)
 
     model_path = input("Please enter the model path")
+    # model_path = "/Users/mischadhar/code/ds-projects/pose-detection/q4-repo/pt-ai/raw_data/models/best_automl_model.pkl"
     loaded_model = load_posedetect_model(model_path)
 
-    y_pred = posedetect_inference(X_pred, loaded_model, y_encoder=None, encoded=False)
+    y_pred = posedetect_inference(X_pred, loaded_model, encoder=None, encoded=False)
 
     print(y_pred)
