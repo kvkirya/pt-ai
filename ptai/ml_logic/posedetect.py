@@ -67,7 +67,7 @@ def load_posedetect_model(model_path):
     return loaded_model
 
 
-def posedetect_inference(keypoints: dict, posedetect_model, encoder, encoded = True):
+def posedetect_inference(keypoints: dict, posedetect_model, encoder = None, encoded = True):
 
     """Function to run inference on calculated angles of 'skeleteon' provided by Movenet
     Multiclass classifier XGBoost - returns one of three classes,
