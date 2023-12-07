@@ -19,8 +19,7 @@ def load_image_data(image_path, width=192, height=192, source="LOCAL"):
     return image
 
 def load_image_for_skeleton(image_path):
-    """This uses the image, in the right shape, to display the skeleton
-    """
+    
     image = tf.io.read_file(image_path)
 
     image = tf.image.decode_png(image)
