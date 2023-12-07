@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, File, UploadFile
+from fastapi import FastAPI, Request, File, UploadFile, BackgroundTasks
 from typing import List, Dict
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -48,6 +48,7 @@ app.add_middleware(
 # Adding different classifier model to run tests
 model_class = load_posedetect_model('/ptai-proj/raw_data/models/best_automl_model.pkl')
 app.state.model = model_class
+app.state.skeleton = None
 # find the movenet model online and load it
 model_movenet = load_model_from_tfhub()
 
@@ -65,13 +66,29 @@ async def prediction(file: UploadFile = File(...)):
     return JSONResponse(content = {'pose':f'Predicted pose is: {y_pred}'})
 
 
-# Create the second endpoint for the movenet model
-@app.post("/skeletonizer/")
-async def get_skeletonization(file: UploadFile = File(...)):
-    data = await file.read()
-    data = Image.open(io.BytesIO(data))
+@app.get("/skeletonizer")
+async def get_skeletonization():
+    return app.state.skeleton
 
-    # turn the image into a tensor
+def process_skeleton(data):
+    image = convert_to_tensor(np.array(data), dtype=tf.float32)
+    image = tf.cast(tf.image.resize_with_pad(image, 192, 192), dtype=tf.int32)
+    image = tf.expand_dims(image, axis=0)
+
+    keypoints_with_scores = run_movenet_inference(model_movenet, image)
+    keypoint_angles = angle_calc(keypoints_with_scores)
+    app.state.skeleton = JSONResponse(content = {'keypoints':pd.DataFrame(keypoint_angles, index=[0]).to_json(),
+                                   'keypoints_scores':json.dumps(keypoints_with_scores.__repr__())})
+
+# Create the second endpoint for the movenet model
+@app.post("/skeletonizer")
+async def get_skeletonization(image_array: Request, background_tasks: BackgroundTasks):
+    data = await image_array.json()
+    # data = Image.open(io.BytesIO(data))
+    data = json.loads(data)
+    background_tasks.add_task(process_skeleton, data)
+    # return {"message": "Image received"}
+    # # turn the image into a tensor 
     image = convert_to_tensor(np.array(data), dtype=tf.float32)
     image = tf.cast(tf.image.resize_with_pad(image, 192, 192), dtype=tf.int32)
     image = tf.expand_dims(image, axis=0)
@@ -80,7 +97,7 @@ async def get_skeletonization(file: UploadFile = File(...)):
     keypoints_with_scores = run_movenet_inference(model_movenet, image)
     keypoint_angles = angle_calc(keypoints_with_scores)
     return JSONResponse(content = {'keypoints':pd.DataFrame(keypoint_angles, index=[0]).to_json(),
-                                   "keypoints_scores":json.dumps(keypoints_with_scores.__repr__())})
+                                   'keypoints_scores':json.dumps(keypoints_with_scores.__repr__())})
 
 class DictionaryModel(BaseModel):
     data: Dict[str, str]
