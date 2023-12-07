@@ -18,6 +18,7 @@ import tensorflow as tf
 import io
 import numpy as np
 import pandas as pd
+import json
 
 
 # Create the app so fastapi knows what to execute
@@ -78,7 +79,8 @@ async def get_skeletonization(file: UploadFile = File(...)):
     #calculate and return keypoints
     keypoints_with_scores = run_movenet_inference(model_movenet, image)
     keypoint_angles = angle_calc(keypoints_with_scores)
-    return JSONResponse(content = {'keypoints':pd.DataFrame(keypoint_angles, index=[0]).to_json()})
+    return JSONResponse(content = {'keypoints':pd.DataFrame(keypoint_angles, index=[0]).to_json(),
+                                   "keypoints_scores":json.dumps(keypoints_with_scores.__repr__())})
 
 class DictionaryModel(BaseModel):
     data: Dict[str, str]
