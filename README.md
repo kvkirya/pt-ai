@@ -1,5 +1,30 @@
-PT.AI is a project made to help people with their homeworkouts. 
-As you train at home you can record a video of you doing the exercise and upload it to PT.AI which will then evaluate your form and tell you whether you're doing it correctly or not.
-PT.AI is trained on the InfiniteForm Dataset linked: https://pixelate.ai/InfiniteForm
+# PT.AI - Pose Tracking with AI
 
-The project was created by 4 people being: alexandergreen550, EmmaAHV, nicolaynicolavich and kvkirya
+PT.AI is a project that leverages two APIs to provide real-time feedback on exercise poses. Whether you're doing push-ups, squats, left lunges, or right lunges, PT.AI has got your form covered.
+
+## How it Works
+
+1. **Input an Image**
+   - 📷 Provide an image to the first API.
+
+2. **Apply Movenet**
+   - 🤖 Movenet is applied to the image, calculating joint angles.
+
+3. **Pose Classification**
+   - 🏋️‍♂️ The second API uses XGBoost, an ML algorithm, to classify the pose based on calculated joint angles.
+
+4. **Feedback on Form**
+   - 🚀 PT.AI compares the angles with ideal angles for the classified movement.
+   - 💡 Receive feedback on your exercise form and know where you can improve.
+
+## How to Use
+
+### API Endpoints
+
+- **Endpoint 1 (Movenet):**
+  - Input: Image
+  - Output: Joint angles
+
+- **Endpoint 2 (Pose Classification):**
+  - Input: Angles from Movenet
+  - Output: Classified pose and form feedback
