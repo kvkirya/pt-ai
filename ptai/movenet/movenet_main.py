@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 import cv2
 # import mediapipe as mp
+import math
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -40,15 +41,35 @@ def plot_skeleton_on_image(image_path, keypoints_with_scores):
     _ = plt.axis('off')
     plt.show()
 
+# Function to calculate the angles
+def angle_triangle(x1, y1, z1, x2, y2, z2, x3, y3, z3):
 
-#Calculating the angles and difference between angles
+    BAx = x1-x2
+    BAy = y1-y2
+    BAz = z1-z2
+
+    BCx = x3-x2
+    BCy = y3-y2
+    BCz = z3-z2
+
+    num = BAx*BCx+BAy*BCy+BAz*BCz
+
+    den = (np.sqrt(BAx**2+BAy**2+BAz**2))*\
+                (np.sqrt((BCx)**2+(BCy)**2+(BCz)**2))
+
+    angle = np.degrees(np.arccos(num / den))
+
+    return round(angle, 3)
+
+# Application on the function on the points
 def calculate_angle(a,b,c):
     a = np.array(a) # First
     b = np.array(b) # Mid
     c = np.array(c) # End
 
-    radians = np.arctan2(c[1]-b[1], c[0]-b[0]) - np.arctan2(a[1]-b[1], a[0]-b[0])
-    angle = np.abs(radians*180.0/np.pi)
+    #radians = np.arctan2(c[1]-b[1], c[0]-b[0]) - np.arctan2(a[1]-b[1], a[0]-b[0])
+    #angle = np.abs(radians*180.0/np.pi)
+    angle = angle_triangle(*a, *b, *c)
 
     if angle >180.0:
         angle = 360-angle
@@ -190,7 +211,7 @@ def angle_calc(keypoints_with_scores):  #(image_capture)
     # output_overlay = draw_prediction_on_image(
     #     np.squeeze(display_image.numpy(), axis=0), keypoints_with_scores)
 
-    key_xy = keypoints_with_scores[:, :, :, :2]
+    key_xy = keypoints_with_scores[:, :, :, :3]
 
     # Create a dictionary of keypoints and their corresponding vector tuples
     key_dict = {}

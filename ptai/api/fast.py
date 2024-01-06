@@ -66,29 +66,15 @@ async def prediction(file: UploadFile = File(...)):
     return JSONResponse(content = {'pose':f'Predicted pose is: {y_pred}'})
 
 
-@app.get("/skeletonizer")
-async def get_skeletonization():
-    return app.state.skeleton
-
-def process_skeleton(data):
-    image = convert_to_tensor(np.array(data), dtype=tf.float32)
-    image = tf.cast(tf.image.resize_with_pad(image, 192, 192), dtype=tf.int32)
-    image = tf.expand_dims(image, axis=0)
-
-    keypoints_with_scores = run_movenet_inference(model_movenet, image)
-    keypoint_angles = angle_calc(keypoints_with_scores)
-    app.state.skeleton = JSONResponse(content = {'keypoints':pd.DataFrame(keypoint_angles, index=[0]).to_json(),
-                                   'keypoints_scores':json.dumps(keypoints_with_scores.__repr__())})
 
 # Create the second endpoint for the movenet model
 @app.post("/skeletonizer")
-async def get_skeletonization(image_array: Request, background_tasks: BackgroundTasks):
+async def get_skeletonization(image_array: Request):
     data = await image_array.json()
     # data = Image.open(io.BytesIO(data))
     data = json.loads(data)
-    background_tasks.add_task(process_skeleton, data)
-    # return {"message": "Image received"}
-    # # turn the image into a tensor 
+    # background_tasks.add_task(process_skeleton, data)
+    # # turn the image into a tensor
     image = convert_to_tensor(np.array(data), dtype=tf.float32)
     image = tf.cast(tf.image.resize_with_pad(image, 192, 192), dtype=tf.int32)
     image = tf.expand_dims(image, axis=0)
