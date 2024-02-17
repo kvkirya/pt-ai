@@ -12,6 +12,7 @@ from ptai.movenet.movenet_model import load_model_from_tfhub, run_movenet_infere
 from ptai.movenet.movenet_data import load_image_data, load_image_for_skeleton
 from ptai.movenet.movenet_plot_img import draw_prediction_on_image
 
+#Works with docker
 def load_model_and_run_inference(image_path):
 
     """This function:
@@ -28,6 +29,7 @@ def load_model_and_run_inference(image_path):
 
     return keypoints_with_scores
 
+
 def plot_skeleton_on_image(image_path, keypoints_with_scores):
 
     display_image = load_image_for_skeleton(image_path)
@@ -41,7 +43,8 @@ def plot_skeleton_on_image(image_path, keypoints_with_scores):
     _ = plt.axis('off')
     plt.show()
 
-# Function to calculate the angles
+
+# Function to calculate the 3D angles
 def angle_triangle(x1, y1, z1, x2, y2, z2, x3, y3, z3):
 
     BAx = x1-x2
@@ -67,9 +70,7 @@ def calculate_angle(a,b,c):
     b = np.array(b) # Mid
     c = np.array(c) # End
 
-    #radians = np.arctan2(c[1]-b[1], c[0]-b[0]) - np.arctan2(a[1]-b[1], a[0]-b[0])
-    #angle = np.abs(radians*180.0/np.pi)
-    angle = angle_triangle(*a, *b, *c)
+    angle = angle_triangle(*a, *b, *c) # use the angle_triangle function
 
     if angle >180.0:
         angle = 360-angle
@@ -96,6 +97,7 @@ KEYPOINT_DICT = {
     'left_ankle': 15,
     'right_ankle': 16
 }
+
 # Maps the edges of the skeleton to colours
 KEYPOINT_EDGE_INDS_TO_COLOR = {
     (0, 1): 'g',
@@ -118,8 +120,6 @@ KEYPOINT_EDGE_INDS_TO_COLOR = {
     (14, 16): 'g',
 }
 
-#We now generate the poses that we want and what each pose requires
-
 #For squats, we want shoulder, hip, knee, ankle,
 Squat = {
     "left_elbow_a": 0,
@@ -137,25 +137,32 @@ Squat = {
     "left_hip_c": 0,
     "right_hip_a": 0,
     "right_hip_b": 0,
-    "right_hip_c": 0,
+    "right_hip_c": 1, #need this one too
     "left_knee_a": 1,
     "right_knee_a": 1, #we want angle between these three
     "left_ankle": 1,
     "right_ankle": 0
 }
 
+Squat_angles_ideal = {
+    "left_hip_b": 90, #we want angle between these three
+    "right_hip_c": 90, #need this one too
+    "left_knee_a": 90,
+    "right_knee_a": 90, #we want angle between these three
+}
+
 
 #For Pushups, we want wrist, elbow, shoulder, hip, knee
 Pushup = {
     "left_elbow_a": 1,
-    "right_elbow_a": 0,
+    "right_elbow_a": 1,
     "left_shoulder_b": 0,
     "left_shoulder_a": 1,
     "right_shoulder_b": 0,
-    "right_shoulder_a": 0,
+    "right_shoulder_a": 1,
     "left_elbow": 0,
     "right_elbow": 0,
-    "left_wrist": 1,
+    "left_wrist": 0,
     "right_wrist": 0,
     "left_hip_a": 1,
     "left_hip_b": 0,
@@ -165,8 +172,18 @@ Pushup = {
     "right_hip_c": 0,
     "left_knee_a": 1,
     "right_knee_a": 1,
-    "left_ankle": 1,
+    "left_ankle": 0,
     "right_ankle": 0
+}
+
+Pushup_angles_ideal = {
+    "left_elbow_a": 90,
+    "left_shoulder_a": 90,
+    "left_hip_a": 180,
+    "left_knee_a": 180,
+    "right_knee_a": 180,
+    "right_elbow_a": 90,
+    "right_shoulder_a": 90
 }
 
 #For Lunges, we want hip, knee, foot
@@ -193,25 +210,24 @@ Lunge = {
     "right_ankle": 0
 }
 
+Lunge_left_angles_ideal = {
+    "left_hip_a": 90,
+    "left_knee_a": 90,
+    "right_knee_a": 90,
+    "right_hip_a": 180
+}
 
-# We now calculate the angles between points
-def angle_calc(keypoints_with_scores):  #(image_capture)
-    # input_size = 192
-    # Resize and pad the image to keep the aspect ratio and fit the expected size.
-    # input_image = tf.expand_dims(image, axis=0)
-    # input_image = tf.image.resize_with_pad(input_image, input_size, input_size)
+Lunge_right_angles_ideal = {
+    "left_hip_a": 180,
+    "left_knee_a": 90,
+    "right_knee_a": 90,
+    "right_hip_a": 90
+}
 
-    # Run model inference.
-    # keypoints_with_scores = movenet(input_image)
+def angle_calc(keypoints_with_scores):
+    """applying he calculate angles function on all angles defined in the angles_dictionary"""
 
-    # # Visualize the predictions with image.
-    # display_image = tf.expand_dims(image, axis=0)
-    # display_image = tf.cast(tf.image.resize_with_pad(
-    #     display_image, 1280, 1280), dtype=tf.int32)
-    # output_overlay = draw_prediction_on_image(
-    #     np.squeeze(display_image.numpy(), axis=0), keypoints_with_scores)
-
-    key_xy = keypoints_with_scores[:, :, :, :3]
+    key_xy = keypoints_with_scores[:, :, :, :3] #pick what body parts we take for the angles
 
     # Create a dictionary of keypoints and their corresponding vector tuples
     key_dict = {}
@@ -219,9 +235,6 @@ def angle_calc(keypoints_with_scores):  #(image_capture)
         vector = tuple(key_xy[0, 0, value])
         key_dict[key] = vector
 
-    # make angles_dictionary
-    #This explains which angles represent what
-    #ie, hips have 3 different angles/edges
     angles_dictionary = {
     "left_elbow_a": (key_dict["left_wrist"],key_dict["left_elbow"],key_dict["left_shoulder"]),
     "right_elbow_a": (key_dict["right_wrist"],key_dict["right_elbow"],key_dict["right_shoulder"]),
@@ -243,30 +256,28 @@ def angle_calc(keypoints_with_scores):  #(image_capture)
     for key, value in angles_dictionary.items():
         angle = calculate_angle(value[0], value[1], value[2]) #calculates the angle between the 3
         angles[key] = angle
+    return angles
 
-    return(angles)
 
-#get angles comparrison
-def compare_angles(prediction, angles, threshold=10):
-    dict1 = prediction
-    dict2 = angles
+#give this function the angles array calculated above and the ideal angles defined for the movements
+def compare_angles(angles, ideal_angles):
+    """angles is the predicted values by the machine and ideal_angles are the
+    angles considered ideal by us in any movement."""
+    dict1 = angles
+    dict2 = ideal_angles
     flexed_dict = {}
 
-    for dict1_key, dict1_values in dict1.items():
-        flexed_dict[dict1_key] = abs(dict2[dict1_key] - dict1[dict1_key]) < threshold
-
+    for dict1_key in dict1:
+        flexed_dict[dict1_key] = abs(dict2[dict1_key] - dict1[dict1_key])
     return flexed_dict
 
-
-
-
-
-#Checking whether the angles are right or not
-def render_red(flexed_dict, KEYPOINT_EDGE_INDS_TO_COLOR):
+def render_red(flexed_dict, KEYPOINT_EDGE_INDS_TO_COLOR, threshold=10):
     '''
     Takes the dict of differences in angles and looks for an angle difference more than 10 degrees,
     then changes the colours of the corresponding bars around the angle to red.
     '''
+
+    #indicate what points form an edge
     bars_dictionary = {
         "left_elbow_a": [(5,7),(7,9)],
         "right_elbow_a": [(6,8),(8,10)],
@@ -283,26 +294,19 @@ def render_red(flexed_dict, KEYPOINT_EDGE_INDS_TO_COLOR):
         "left_knee_a": [(11,13),(13,15)],
         "right_knee_a": [(12,14),(14,16)]
     }
-
     RED_EDGES = KEYPOINT_EDGE_INDS_TO_COLOR.copy()
 
+    # check for difference if larger then 7 then mark as red --> 7 degree threshold
     for k, v in flexed_dict.items():
-        if v >= 7:
+        if v >= threshold:
             points_to_color = bars_dictionary[k]
             for point in points_to_color:
                 RED_EDGES[point] = 'r'
-
     return RED_EDGES
 
 
-def _keypoints_and_edges_for_display_red(keypoints_with_scores,
-                                        RED_EDGES,
-                                        height,
-                                        width,
-                                        keypoint_threshold=0.11):
-
+def _keypoints_and_edges_for_display_red(keypoints_with_scores, RED_EDGES, height, width, keypoint_threshold=0.11):
     """Returns high confidence keypoints and edges for visualization.
-
     Args:
         keypoints_with_scores: A numpy array with shape [1, 1, 17, 3] representing
         the keypoint coordinates and scores returned from the MoveNet model.
@@ -317,6 +321,7 @@ def _keypoints_and_edges_for_display_red(keypoints_with_scores,
         * the coordinates of all skeleton edges of all detected entities;
         * the colors in which the edges should be plotted.
     """
+
     keypoints_all = []
     keypoint_edges_all = []
     edge_colors = []
@@ -352,11 +357,8 @@ def _keypoints_and_edges_for_display_red(keypoints_with_scores,
         edges_xy = np.zeros((0, 2, 2))
     return keypoints_xy, edges_xy, edge_colors
 
-def draw_prediction_on_image_red(
-    image, keypoints_with_scores, red_edges, crop_region=None, close_figure=False,
-    output_image_height=None):
+def draw_prediction_on_image_red(image, keypoints_with_scores, red_edges, crop_region=None, close_figure=False, output_image_height=None):
     """Draws the keypoint predictions on image.
-
     Args:
         image: A numpy array with shape [height, width, channel] representing the
         pixel values of the input image.
@@ -373,6 +375,7 @@ def draw_prediction_on_image_red(
         A numpy array with shape [out_height, out_width, channel] representing the
         image overlaid with keypoint predictions.
     """
+
     height, width, channel = image.shape
     aspect_ratio = float(width) / height
     fig, ax = plt.subplots(figsize=(12 * aspect_ratio, 12))
@@ -445,11 +448,11 @@ def plot_red(keypoints_with_scores,image, red_edges):
 
 if __name__ == "__main__":
 
-    image_path = "/Users/nicowsendagorta/code/kvkirya/pt-ai/raw_data/test_squat.png"
-    image = tf.keras.utils.load_img(image_path)
-    input_arr = tf.keras.utils.img_to_array(image)
-    input_arr = np.array([input_arr])
-    print(input_arr.shape)
+ #   image_path = '/home/kyrill/code/pt-ai/pt-ai/raw_data/test_images/IMG_8806.jpg'
+ #   image = tf.keras.utils.load_img(image_path)
+ #   input_arr = tf.keras.utils.img_to_array(image)
+ #   input_arr = np.array([input_arr])
+ #   print(input_arr.shape)
 
     # response = requests.post("http://localhost:8080/skeletonizer", json=json.dumps(input_arr.tolist()))
     # keypoints_with_scores = response.json()
@@ -460,8 +463,8 @@ if __name__ == "__main__":
 
     # plot_skeleton_on_image(image_path, keypoints_with_scores)
 
-    image_path_1 = "/Users/nicowsendagorta/code/kvkirya/pt-ai/raw_data/perfect_squat.png"
-    image_path_2 = '/Users/nicowsendagorta/code/kvkirya/pt-ai/raw_data/cropped_data_02/00020029.rgb.png_4_0.0_squats_cropped.png'
+    image_path_1 = "/home/kyrill/code/pt-ai/pt-ai/raw_data/test_images/IMG_8806.jpg"
+    image_path_2 = '/home/kyrill/code/pt-ai/pt-ai/raw_data/test_images/woman_pushup.jpg'
 
     keypoints_with_scores_im1 = load_model_and_run_inference(image_path=image_path_1)
     print(keypoints_with_scores_im1)
@@ -470,7 +473,7 @@ if __name__ == "__main__":
     angles = angle_calc(keypoints_with_scores_im1)
     prediction = angle_calc(keypoints_with_scores_im2)
     threshold = 20
-    flexed_dict = compare_angles(prediction, angles, threshold)
+    flexed_dict = compare_angles(prediction, angles)
 
     KEYPOINT_EDGE_INDS_TO_COLOR = {
     (0, 1): 'g',
@@ -494,7 +497,7 @@ if __name__ == "__main__":
 }
 
 
-    colored_edges = render_red(flexed_dict, KEYPOINT_EDGE_INDS_TO_COLOR)
+    colored_edges = render_red(flexed_dict, KEYPOINT_EDGE_INDS_TO_COLOR, threshold)
 
     image = tf.io.read_file(image_path_2)
     image = tf.image.decode_png(image)

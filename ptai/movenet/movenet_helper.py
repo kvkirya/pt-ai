@@ -83,6 +83,7 @@ def _keypoints_and_edges_for_display(keypoints_with_scores,
 
 
 
+
 # if __name__ == "__main__":
     # image_path = input("Please enter the path to the image:")
 
