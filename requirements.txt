@@ -25,7 +25,6 @@ jupyterlab==4.0.9
 jupyterlab_pygments==0.3.0
 jupyterlab_server==2.25.2
 matplotlib==3.8.2
-math
 nbclient==0.9.0
 nbconvert==7.11.0
 nbformat==5.9.2
