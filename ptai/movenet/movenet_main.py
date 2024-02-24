@@ -496,7 +496,6 @@ if __name__ == "__main__":
     (14, 16): 'g',
 }
 
-
     colored_edges = render_red(flexed_dict, KEYPOINT_EDGE_INDS_TO_COLOR, threshold)
 
     image = tf.io.read_file(image_path_2)
@@ -505,9 +504,9 @@ if __name__ == "__main__":
     height=192
     width=192
 
-    #print(_keypoints_and_edges_for_display_red(keypoints_with_scores_im1, RED_EDGES, height, width, keypoint_threshold=0.11))
+    print(plot_red(keypoints_with_scores_im1, image, colored_edges))
 
-    print(draw_prediction_on_image(image,keypoints_with_scores_im2))
+    #print(draw_prediction_on_image(image,keypoints_with_scores_im2))
     #print(_angles(prediction, angles))
     #print(keypoints_with_scores.shape)
     # plot_skeleton_on_image(image_path, keypoints_with_scores)
