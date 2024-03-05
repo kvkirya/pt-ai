@@ -504,32 +504,8 @@ if __name__ == "__main__":
     height=192
     width=192
 
-    print(plot_red(keypoints_with_scores_im1, image, colored_edges))
-
-    #print(draw_prediction_on_image(image,keypoints_with_scores_im2))
-    #print(_angles(prediction, angles))
-    #print(keypoints_with_scores.shape)
-    # plot_skeleton_on_image(image_path, keypoints_with_scores)
-
-
-# -------------------------------------------------------------
-# compare_angles function to
-# return a boolean value for each angle based on a threshold.
-# ff the angle is less than threshold, consider flexed;
-# otherwise not flexed
-
-# aka ....dict < threshold which is inputed as threshold=90
-
-#  flexed_dict = {}
-
-#     for dict1_key, dict1_values in dict1.items():
-#         flexed_dict[dict1_key] = abs(dict2[dict1_key] - dict1[dict1_key]) < threshold
-
-#     return flexed_dict
-
-
-
-# angles = angle_calc(keypoints_with_scores_im1)
-# prediction = angle_calc(keypoints_with_scores_im2)
-
-# flexed_dict = compare_angles(prediction, angles, threshold)
+    """Functions leading to crash"""
+    #print(draw_prediction_on_image_red(image, keypoints_with_scores_im1, colored_edges))
+    #print(plot_red(keypoints_with_scores_im1, image, colored_edges))
+    #print(draw_prediction_on_image(image,keypoints_with_scores_im1))
+    #print(plot_skeleton_on_image(image, keypoints_with_scores_im1))
