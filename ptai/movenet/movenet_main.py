@@ -1,8 +1,5 @@
 # IMPORTS
 import matplotlib.pyplot as plt
-import cv2
-# import mediapipe as mp
-import math
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -467,9 +464,8 @@ if __name__ == "__main__":
     image_path_2 = '/home/kyrill/code/pt-ai/pt-ai/raw_data/test_images/woman_pushup.jpg'
 
     keypoints_with_scores_im1 = load_model_and_run_inference(image_path=image_path_1)
-    print(keypoints_with_scores_im1)
-    keypoints_with_scores_im2 = load_model_and_run_inference(image_path=image_path_2)
 
+    keypoints_with_scores_im2 = load_model_and_run_inference(image_path=image_path_2)
     angles = angle_calc(keypoints_with_scores_im1)
     prediction = angle_calc(keypoints_with_scores_im2)
     threshold = 20
@@ -505,7 +501,8 @@ if __name__ == "__main__":
     width=192
 
     """Functions leading to crash"""
+
     #print(draw_prediction_on_image_red(image, keypoints_with_scores_im1, colored_edges))
-    #print(plot_red(keypoints_with_scores_im1, image, colored_edges))
+    print(plot_red(keypoints_with_scores_im1, image, colored_edges))
     #print(draw_prediction_on_image(image,keypoints_with_scores_im1))
     #print(plot_skeleton_on_image(image, keypoints_with_scores_im1))
