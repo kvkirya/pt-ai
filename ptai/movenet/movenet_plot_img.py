@@ -79,7 +79,7 @@ def draw_prediction_on_image(
 #   image_from_plot = image_from_plot.reshape(fig.canvas.get_width_height()[::-1] + (3,))
 #   plt.close(fig)
 #  plt.savefig(f"{image}")
-  plt.show()
+  plt.show()    #plots and shows the image
   if output_image_height is not None:
     output_image_width = int(output_image_height / height * width)
     image_from_plot = cv2.resize(
