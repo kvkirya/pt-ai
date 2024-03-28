@@ -434,8 +434,7 @@ def plot_red(keypoints_with_scores,image, red_edges):
     # Resize and pad the image to keep the aspect ratio and fit the expected size.
     display_image = tf.cast(tf.image.resize_with_pad(image, 192, 192), dtype=tf.int32)
 
-    output_overlay = draw_prediction_on_image_red(
-        display_image, keypoints_with_scores, red_edges)
+    output_overlay = draw_prediction_on_image_red(display_image, keypoints_with_scores, red_edges)
 
     # plt.figure(figsize=(5, 5))
     # plt.imshow(output_overlay)
@@ -500,9 +499,15 @@ if __name__ == "__main__":
     height=192
     width=192
 
-    """Functions leading to crash"""
+    #print(draw_prediction_on_image_red(image, keypoints_with_scores_im1, colored_edges)) #returns coordinates no image
+    #print(plot_red(keypoints_with_scores_im1, image, colored_edges)) #returns coordinates no image
+    #print(draw_prediction_on_image(image,keypoints_with_scores_im1)) #prints image with the lines
 
-    #print(draw_prediction_on_image_red(image, keypoints_with_scores_im1, colored_edges))
-    print(plot_red(keypoints_with_scores_im1, image, colored_edges))
-    #print(draw_prediction_on_image(image,keypoints_with_scores_im1))
-    #print(plot_skeleton_on_image(image, keypoints_with_scores_im1))
+    image_to_predict = plot_red(keypoints_with_scores_im1, image, colored_edges)
+
+    """Combination of Functions"""
+    print(draw_prediction_on_image(image_to_predict, keypoints_with_scores_im1))
+    #Combination works looks mad pixelated and original lines are also there
+
+    """Functions leading to crash"""
+    #print(plot_skeleton_on_image(image, keypoints_with_scores_im1)) #leads to error

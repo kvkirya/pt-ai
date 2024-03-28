@@ -14,12 +14,13 @@ def load_image_data(image_path, width=192, height=192, source="LOCAL"):
 
         image = tf.expand_dims(image, axis=0)
         # Resize and pad the image to keep the aspect ratio and fit the expected size.
-        image = tf.cast(tf.image.resize_with_pad(image, width, height), dtype=tf.int32)
+        image_resized = tf.image.resize_with_pad(image, width, height, antialias = True)
+        image = tf.cast(image_resized, dtype=tf.int32)
 
     return image
 
 def load_image_for_skeleton(image_path):
-    
+
     image = tf.io.read_file(image_path)
 
     image = tf.image.decode_png(image)
