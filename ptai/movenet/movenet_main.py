@@ -141,12 +141,21 @@ Squat = {
     "right_ankle": 0
 }
 
-Squat_angles_ideal = {
-    "left_hip_b": 90, #we want angle between these three
-    "right_hip_c": 90, #need this one too
-    "left_knee_a": 90,
-    "right_knee_a": 90, #we want angle between these three
-}
+#Define ideal angles for squats
+Squat_angles_ideal = {'left_elbow_a': 180.0,
+                      'right_elbow_a': 180.0,
+                      'left_shoulder_b': 90.0,
+                      'left_shoulder_a': 90.0,
+                      'right_shoulder_b': 90.0,
+                      'right_shoulder_a': 90.0,
+                      'left_hip_a': 80.047,
+                      'left_hip_b': 90.0,
+                      'left_hip_c': 90.0,
+                      'right_hip_a': 80.026,
+                      'right_hip_b': 90.049,
+                      'right_hip_c': 90.039,
+                      'left_knee_a': 90.161,
+                      'right_knee_a': 90.654}
 
 
 #For Pushups, we want wrist, elbow, shoulder, hip, knee
@@ -173,15 +182,21 @@ Pushup = {
     "right_ankle": 0
 }
 
-Pushup_angles_ideal = {
-    "left_elbow_a": 90,
-    "left_shoulder_a": 90,
-    "left_hip_a": 180,
-    "left_knee_a": 180,
-    "right_knee_a": 180,
-    "right_elbow_a": 90,
-    "right_shoulder_a": 90
-}
+#Define ideal angles for pushups
+Pushup_angles_ideal = {'left_elbow_a': 90.0,
+                      'right_elbow_a': 90.0,
+                      'left_shoulder_b': 90.0,
+                      'left_shoulder_a': 180.0,
+                      'right_shoulder_b': 90.0,
+                      'right_shoulder_a': 180.0,
+                      'left_hip_a': 180.0,
+                      'left_hip_b': 90.0,
+                      'left_hip_c': 90.0,
+                      'right_hip_a': 180.0,
+                      'right_hip_b': 90.0,
+                      'right_hip_c': 90.0,
+                      'left_knee_a': 180.0,
+                      'right_knee_a': 180.0}
 
 #For Lunges, we want hip, knee, foot
 Lunge = {
@@ -207,20 +222,39 @@ Lunge = {
     "right_ankle": 0
 }
 
-Lunge_left_angles_ideal = {
-    "left_hip_a": 90,
-    "left_knee_a": 90,
-    "right_knee_a": 90,
-    "right_hip_a": 180
-}
+#Ideal left lunge angles
+Lunge_left_angles_ideal = {'left_elbow_a': 90.0,
+                      'right_elbow_a': 90.0,
+                      'left_shoulder_b': 90.0,
+                      'left_shoulder_a': 90.0,
+                      'right_shoulder_b': 90.0,
+                      'right_shoulder_a': 90.0,
+                      'left_hip_a': 90.047,
+                      'left_hip_b': 90.0,
+                      'left_hip_c': 90.0,
+                      'right_hip_a': 180.0,
+                      'right_hip_b': 90.049,
+                      'right_hip_c': 90.039,
+                      'left_knee_a': 90.161,
+                      'right_knee_a': 90.654}
 
-Lunge_right_angles_ideal = {
-    "left_hip_a": 180,
-    "left_knee_a": 90,
-    "right_knee_a": 90,
-    "right_hip_a": 90
-}
+#Ideal right lunge angles
+Lunge_right_angles_ideal = {'left_elbow_a': 90.0,
+                      'right_elbow_a': 90.0,
+                      'left_shoulder_b': 90.0,
+                      'left_shoulder_a': 90.0,
+                      'right_shoulder_b': 90.0,
+                      'right_shoulder_a': 90.0,
+                      'left_hip_a': 180.0,
+                      'left_hip_b': 90.0,
+                      'left_hip_c': 90.0,
+                      'right_hip_a': 90.0,
+                      'right_hip_b': 90.049,
+                      'right_hip_c': 90.039,
+                      'left_knee_a': 90.161,
+                      'right_knee_a': 90.654}
 
+#Function to calculate angles
 def angle_calc(keypoints_with_scores):
     """applying he calculate angles function on all angles defined in the angles_dictionary"""
 
@@ -255,8 +289,7 @@ def angle_calc(keypoints_with_scores):
         angles[key] = angle
     return angles
 
-
-#give this function the angles array calculated above and the ideal angles defined for the movements
+#Give this function the angles array calculated above and the ideal angles defined for the movements
 def compare_angles(angles, ideal_angles):
     """angles is the predicted values by the machine and ideal_angles are the
     angles considered ideal by us in any movement."""
@@ -268,6 +301,7 @@ def compare_angles(angles, ideal_angles):
         flexed_dict[dict1_key] = abs(dict2[dict1_key] - dict1[dict1_key])
     return flexed_dict
 
+#Turn edges red
 def render_red(flexed_dict, KEYPOINT_EDGE_INDS_TO_COLOR, threshold=10):
     '''
     Takes the dict of differences in angles and looks for an angle difference more than 10 degrees,
@@ -301,7 +335,7 @@ def render_red(flexed_dict, KEYPOINT_EDGE_INDS_TO_COLOR, threshold=10):
                 RED_EDGES[point] = 'r'
     return RED_EDGES
 
-
+#Don't use this function
 def _keypoints_and_edges_for_display_red(keypoints_with_scores, RED_EDGES, height, width, keypoint_threshold=0.11):
     """Returns high confidence keypoints and edges for visualization.
     Args:
@@ -354,6 +388,7 @@ def _keypoints_and_edges_for_display_red(keypoints_with_scores, RED_EDGES, heigh
         edges_xy = np.zeros((0, 2, 2))
     return keypoints_xy, edges_xy, edge_colors
 
+#Draw a prediction in red deifining what points are red and what aren't
 def draw_prediction_on_image_red(image, keypoints_with_scores, red_edges, crop_region=None, close_figure=False, output_image_height=None):
     """Draws the keypoint predictions on image.
     Args:
@@ -425,7 +460,7 @@ def draw_prediction_on_image_red(image, keypoints_with_scores, red_edges, crop_r
         #    interpolation=cv2.INTER_CUBIC)
     return image_from_plot
 
-
+#Plot the skeleton red
 def plot_red(keypoints_with_scores,image, red_edges):
     if image.shape[2] == 4:
             image = image[:,:,:3]
@@ -459,16 +494,19 @@ if __name__ == "__main__":
 
     # plot_skeleton_on_image(image_path, keypoints_with_scores)
 
-    image_path_1 = "/home/kyrill/code/pt-ai/pt-ai/raw_data/test_images/IMG_8806.jpg"
-    image_path_2 = '/home/kyrill/code/pt-ai/pt-ai/raw_data/test_images/woman_pushup.jpg'
+    image_path_1 = "/home/kyrill/code/pt-ai/pt-ai/raw_data/test_images/squat_not_chris_heria.jpg"
+    image_path_2 = '/home/kyrill/code/pt-ai/pt-ai/raw_data/test_images/chris_heria_squat.jpg'
 
     keypoints_with_scores_im1 = load_model_and_run_inference(image_path=image_path_1)
-
     keypoints_with_scores_im2 = load_model_and_run_inference(image_path=image_path_2)
-    angles = angle_calc(keypoints_with_scores_im1)
+
+    #angles = angle_calc(keypoints_with_scores_im1)
+    angles = Squat_angles_ideal #compare to preprogrammed perfect angles
     prediction = angle_calc(keypoints_with_scores_im2)
-    threshold = 20
-    flexed_dict = compare_angles(prediction, angles)
+    threshold = 55
+    flexed_dict = compare_angles(angles, prediction)
+    print(angles)
+    print(prediction)
 
     KEYPOINT_EDGE_INDS_TO_COLOR = {
     (0, 1): 'g',
@@ -493,7 +531,7 @@ if __name__ == "__main__":
 
     colored_edges = render_red(flexed_dict, KEYPOINT_EDGE_INDS_TO_COLOR, threshold)
 
-    image = tf.io.read_file(image_path_2)
+    image = tf.io.read_file(image_path_1)
     image = tf.image.decode_png(image)
 
     height=192
@@ -503,7 +541,7 @@ if __name__ == "__main__":
     #print(plot_red(keypoints_with_scores_im1, image, colored_edges)) #returns coordinates no image
     #print(draw_prediction_on_image(image,keypoints_with_scores_im1)) #prints image with the lines
 
-    image_to_predict = plot_red(keypoints_with_scores_im1, image, colored_edges)
+    image_to_predict = plot_red(keypoints_with_scores_im1, tf.image.resize_with_pad(image, width, height, antialias = True), colored_edges)
 
     """Combination of Functions"""
     print(draw_prediction_on_image(image_to_predict, keypoints_with_scores_im1))
