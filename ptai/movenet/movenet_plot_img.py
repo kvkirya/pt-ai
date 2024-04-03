@@ -50,13 +50,13 @@ def draw_prediction_on_image(
    edge_colors) = _keypoints_and_edges_for_display(
        keypoints_with_scores, height, width)
 
-  line_segments.set_segments(keypoint_edges)
-  line_segments.set_color(edge_colors)
-  if keypoint_edges.shape[0]:
-    line_segments.set_segments(keypoint_edges)
-    line_segments.set_color(edge_colors)
-  if keypoint_locs.shape[0]:
-    scat.set_offsets(keypoint_locs)
+ # line_segments.set_segments(keypoint_edges)
+ # line_segments.set_color(edge_colors)
+ # if keypoint_edges.shape[0]:
+ #   line_segments.set_segments(keypoint_edges)
+ #   line_segments.set_color(edge_colors)
+ # if keypoint_locs.shape[0]:
+ #   scat.set_offsets(keypoint_locs)
 
   if crop_region is not None:
     xmin = max(crop_region['x_min'] * width, 0.0)
