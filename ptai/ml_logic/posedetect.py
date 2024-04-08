@@ -89,18 +89,20 @@ def posedetect_inference(keypoints, posedetect_model, encoder = None, encoded = 
 
 if __name__ == "__main__":
 
-    test_img_path = input("Please enter the path to the test image")
+    #test_img_path = input("Please enter the path to the test image")
     # test_img_path = "/Users/mischadhar/code/ds-projects/pose-detection/q4-repo/pt-ai/raw_data/test_images/IMG_1196.jpg"
+    test_img_path_kyrill_pc ="/home/kyrill/code/pt-ai/pt-ai/raw_data/test_images/squat_not_chris_heria.jpg"
 
-    test_img = load_image_data(test_img_path)
+    test_img = load_image_data(test_img_path_kyrill_pc)
 
     movenet = load_model_from_tfhub()
 
     X_pred = posedetect_preproc(test_img, movenet)
 
-    model_path = input("Please enter the model path")
+    #model_path = input("Please enter the model path")
     # model_path = "/Users/mischadhar/code/ds-projects/pose-detection/q4-repo/pt-ai/raw_data/models/best_automl_model.pkl"
-    loaded_model = load_posedetect_model(model_path)
+    model_path_kyrill_pc = "/home/kyrill/code/pt-ai/pt-ai/raw_data/models/best_automl_model.pkl"
+    loaded_model = load_posedetect_model(model_path_kyrill_pc)
 
     y_pred = posedetect_inference(X_pred, loaded_model, encoder=None, encoded=False)
 
