@@ -69,6 +69,10 @@ db.sqlite3-journal
 instance/
 .webassets-cache
 
+#recommended by mischa to put in here:
+.DS_Store
+*Zone.Identifier
+
 # Scrapy stuff:
 .scrapy
 
